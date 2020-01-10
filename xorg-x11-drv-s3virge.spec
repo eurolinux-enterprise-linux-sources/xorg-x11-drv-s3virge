@@ -5,22 +5,20 @@
 Summary:   Xorg X11 s3virge video driver
 Name:      xorg-x11-drv-s3virge
 Version:   1.10.6
-Release:   2%{?dist}
+Release:   10%{?dist}
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Source0:   ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
-Source1:   s3virge.xinf
 
 ExcludeArch: s390 s390x
 
-BuildRequires: xorg-x11-server-sdk >= 1.3.0.0-6
+BuildRequires: xorg-x11-server-devel >= 1.10.99.902
+BuildRequires: autoconf automake libtool
 
-Requires:  hwdata
-Requires:  Xorg %(xserver-sdk-abi-requires ansic)
-Requires:  Xorg %(xserver-sdk-abi-requires videodrv)
+Requires: Xorg %(xserver-sdk-abi-requires ansic)
+Requires: Xorg %(xserver-sdk-abi-requires videodrv)
 
 %description 
 X.Org X11 s3virge video driver.
@@ -29,16 +27,14 @@ X.Org X11 s3virge video driver.
 %setup -q -n %{tarball}-%{version}
 
 %build
+autoreconf -vif
 %configure --disable-static
-make
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 make install DESTDIR=$RPM_BUILD_ROOT
-
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/hwdata/videoaliases
-install -m 0644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/hwdata/videoaliases/
 
 # FIXME: Remove all libtool archives (*.la) from modules directory.  This
 # should be fixed in upstream Makefile.am or whatever.
@@ -50,21 +46,84 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %{driverdir}/s3virge_drv.so
-%{_datadir}/hwdata/videoaliases/s3virge.xinf
 %{_mandir}/man4/s3virge.4*
 
 %changelog
-* Wed Aug 22 2012 airlied@redhat.com - 1.10.6-2
-- rebuild for server ABI requires
+* Mon Apr 28 2014 Adam Jackson <ajax@redhat.com> - 1.10.6-10
+- Fix rhel arch list
 
-* Wed Aug 08 2012 Ben Skeggs <bskeggs@redhat.com> 1.10.6-1
-- upstream release 1.10.6 (rebase for 6.4)
+* Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.10.6-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
-* Tue Jun 28 2011 Ben Skeggs <bskeggs@redhat.com> - 1.10.4-2
-- rebuild for 6.2 server rebase
+* Thu Mar 07 2013 Dave Airlie <airlied@redhat.com> 1.10.6-8
+- autoreconf for aarch64
 
-* Mon Nov 30 2009 Dennis Gregorovic <dgregor@redhat.com> - 1.10.4-1.1
-- Rebuilt for RHEL 6
+* Thu Mar 07 2013 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.6-7
+- require xorg-x11-server-devel, not -sdk
+
+* Thu Mar 07 2013 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.6-6
+- ABI rebuild
+
+* Fri Feb 15 2013 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.6-5
+- ABI rebuild
+
+* Fri Feb 15 2013 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.6-4
+- ABI rebuild
+
+* Thu Jan 10 2013 Adam Jackson <ajax@redhat.com> - 1.10.6-3
+- ABI rebuild
+
+* Sun Jul 22 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.10.6-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
+* Wed Jul 18 2012 Dave Airlie <airlied@redhat.com> 1.10.6-1
+- s3virge 1.10.6
+
+* Thu Apr 05 2012 Adam Jackson <ajax@redhat.com> - 1.10.4-16
+- RHEL arch exclude updates
+
+* Sat Feb 11 2012 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.4-15
+- ABI rebuild
+
+* Fri Feb 10 2012 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.4-14
+- ABI rebuild
+
+* Tue Jan 24 2012 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.4-13
+- ABI rebuild
+
+* Wed Jan 04 2012 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.4-12
+- Rebuild for server 1.12
+
+* Fri Dec 16 2011 Adam Jackson <ajax@redhat.com> - 1.10.4-11
+- Drop xinf file
+
+* Wed Nov 16 2011 Adam Jackson <ajax@redhat.com> 1.10.4-10
+- ABI rebuild
+- s3virge-1.10.4-vga.patch: Adapt to videoabi 12
+
+* Thu Aug 18 2011 Adam Jackson <ajax@redhat.com> - 1.10.4-9
+- Rebuild for xserver 1.11 ABI
+
+* Wed May 11 2011 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.4-8
+- Rebuild for server 1.11
+
+* Mon Feb 28 2011 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.4-7
+- Rebuild for server 1.10
+
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.10.4-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
+* Thu Dec 02 2010 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.4-5
+- Rebuild for server 1.10
+
+* Wed Oct 27 2010 Adam Jackson <ajax@redhat.com> 1.10.4-4
+- Add ABI requires magic (#542742)
+
+* Mon Jul 05 2010 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.4-3
+- rebuild for X Server 1.9
+
+* Thu Jan 21 2010 Peter Hutterer <peter.hutterer@redhat.com> - 1.10.4-2
+- Rebuild for server 1.8
 
 * Tue Aug 04 2009 Dave Airlie <airlied@redhat.com> 1.10.4-1
 - s3virge 1.10.4
