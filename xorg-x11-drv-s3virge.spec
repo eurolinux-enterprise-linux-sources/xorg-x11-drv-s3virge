@@ -4,8 +4,8 @@
 
 Summary:   Xorg X11 s3virge video driver
 Name:      xorg-x11-drv-s3virge
-Version:   1.10.6
-Release:   10%{?dist}
+Version:   1.10.7
+Release:   1%{?dist}
 URL:       http://www.x.org
 License:   MIT
 Group:     User Interface/X Hardware Support
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/s3virge.4*
 
 %changelog
+* Wed Nov 11 2015 Adam Jackson <ajax@redhat.com> 1.10.7-1
+- s3virge 1.10.7
+
 * Mon Apr 28 2014 Adam Jackson <ajax@redhat.com> - 1.10.6-10
 - Fix rhel arch list
 
